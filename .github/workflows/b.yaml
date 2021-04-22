@@ -32,7 +32,7 @@ jobs:
           node-version: 15
       - run: yarn install
       - run: |
-          if git diff origin/develop...HEAD --name-only --relative=packages/a
+          if git diff origin/develop...HEAD --name-only --relative=packages/b
           then
             yarn test
           fi

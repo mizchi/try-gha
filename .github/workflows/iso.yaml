@@ -1,0 +1,64 @@
+name: b-test
+on: [push]
+jobs:
+  sparse:
+    runs-on: Ubuntu-20.04
+    steps:
+      - name: Sparse checkout
+        shell: bash
+        run: |
+          REPO="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          BRANCH="${GITHUB_REF/#refs\/heads\//}"
+          # Following code is based on logs of actions/checkout@v, with sparseCheckout stuff inserted in the middle
+          echo "Syncing repository: $GITHUB_REPOSITORY"
+          echo "Working directory is '$(pwd)' GITHUB_WORKSPACE=$GITHUB_WORKSPACE BRANCH=$BRANCH"
+          git version
+          git init $GITHUB_WORKSPACE
+          git remote add origin https://github.com/$GITHUB_REPOSITORY
+          git config --local gc.auto 0
+
+          git config core.sparseCheckout true
+
+          # Add here contents of sparse-checkout line by line
+          echo "iso" >> .git/info/sparse-checkout
+
+          # echo ... 
+          git -c protocol.version=2 fetch --no-tags --prune --progress --depth=10 origin +${GITHUB_SHA}:refs/remotes/origin/${BRANCH}
+          git checkout --progress --force -B $BRANCH refs/remotes/origin/$BRANCH
+          ls
+  # check:
+  #   runs-on: Ubuntu-20.04
+  #   outputs:
+  #     active: ${{ steps.checker.active }}
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - id: checker
+  #       run: |
+  #         if git diff origin/develop...HEAD --name-only --relative=packages/a
+  #         then
+  #           echo "::set-output name=active::true"
+  #         fi
+  # test:
+  #   # needs: check
+  #   # if: ${{ needs.check.outputs.active }}
+  #   runs-on: Ubuntu-20.04
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: cache node_modules
+  #       uses: actions/cache@v1
+  #       with:
+  #         path: node_modules
+  #         key: node_modules_yarn-${{ hashFiles('**/yarn.lock') }}
+  #         restore-keys: |
+  #           node_modules_yarn-
+  #     - name: Use Node.js 15
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 15
+  #     - run: yarn install
+  #     - run: |
+  #         if git diff origin/develop...HEAD --name-only --relative=packages/b
+  #         then
+  #           yarn test
+  #         fi
+  #       working-directory: ./pacakages/b
