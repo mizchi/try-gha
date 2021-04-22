@@ -2,15 +2,17 @@ name: iso-test
 on: [push]
 jobs:
   sparse-test:
+    name: Sparse chekcout
     runs-on: Ubuntu-20.04
+    shell: bash
     steps:
-      - run: |
-        REPO="https://${GITHUB_ACTOR}:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git"
-        git clone --filter=blob:none --no-checkout --depth 1  --sparse $REPO .
-        git sparse-checkout init --cone
-        git sparse-checkout add iso
-        git checkout
-      # - uses: actions/checkout@v2
+      # - run: |
+      #   REPO="https://${GITHUB_ACTOR}:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git"
+      #   git clone --filter=blob:none --no-checkout --depth 1  --sparse $REPO .
+      #   git sparse-checkout init --cone
+      #   git sparse-checkout add iso
+      #   git checkout
+      - uses: actions/checkout@v2
       - run: ls
 
       # - name: Sparse checkout
@@ -33,7 +35,7 @@ jobs:
       #     # Add here contents of sparse-checkout line by line
       #     echo "iso" >> .git/info/sparse-checkout
 
-      #     # echo ... 
+      #     # echo ...
       #     git -c protocol.version=2 fetch --no-tags --prune --progress --depth=1 origin +${GITHUB_SHA}:refs/remotes/origin/${BRANCH}
       #     git checkout --progress --force -B $BRANCH refs/remotes/origin/$BRANCH
       #     ls -al
