@@ -17,6 +17,7 @@ jobs:
           git checkout ${GITHUB_SHA}
           echo "::set-output name=changed::$(git diff --exit-code --quiet origin/main --relative=${SPARSE_CHECKOUT_DIR} > /dev/null || echo $?)"
   sparsed-test:
+    runs-on: Ubuntu-20.04
     needs: [sparsed-check]
     if: needs.sparsed-check.outputs.changed == '1'
     steps:
