@@ -13,7 +13,7 @@ jobs:
           git sparse-checkout init --cone
           git sparse-checkout add ${SPARSE_CHECKOUT_DIR}
           git checkout ${GITHUB_SHA}
-          echo "::set-output name=changed::$(git diff --exit-code --quiet origin/main --relative=iso > /dev/null || echo $?)"
+          echo "::set-output name=changed::$(git diff --exit-code --quiet origin/main --relative=${SPARSE_CHECKOUT_DIR} > /dev/null || echo $?)"
       - if: steps.checkout.outputs.changed == 1
         run: yarn test
         working-directory: iso
