@@ -34,6 +34,5 @@ jobs:
       - run: |
           if ! git diff origin/main...HEAD --name-only --relative=packages/b
           then
-            yarn test
+            yarn --cwd packages/b test
           fi
-        working-directory: ./pacakages/b
