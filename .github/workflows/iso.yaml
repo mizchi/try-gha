@@ -3,15 +3,17 @@ on: [push]
 jobs:
   sparse-test:
     runs-on: Ubuntu-20.04
+    env:
+      SPARSE_CHECKOUT_DIR: iso
     steps:
-      - name: sparse checkout
+      - id: checkout
+        name: sparse checkout
         run: |
           git clone --filter=blob:none --no-checkout --depth 1 --sparse https://${GITHUB_ACTOR}:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git .
           git sparse-checkout init --cone
-          git sparse-checkout add iso
+          git sparse-checkout add ${SPARSE_CHECKOUT_DIR}
           git checkout ${GITHUB_SHA}
-      - id: "check"
-        run: echo "::set-output name=result::$(git diff --exit-code --quiet origin/main --relative=iso > /dev/null || echo $?)"
-      - if: steps.check.outputs.result == 1
+          echo "::set-output name=changed::$(git diff --exit-code --quiet origin/main --relative=iso > /dev/null || echo $?)"
+      - if: steps.checkout.outputs.changed == 1
         run: yarn test
         working-directory: iso
