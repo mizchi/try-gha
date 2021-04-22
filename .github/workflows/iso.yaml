@@ -10,14 +10,14 @@ jobs:
       - run: git checkout ${GITHUB_SHA}
       - run: git diff origin/main...HEAD --name-only --relative=iso
       - id: check
-        shell: bash -x '{0}'
         run: |
-          _=$(git diff --exit-code --quiet origin/main...HEAD --name-only --relative=iso)
-          echo "::set-output name=changed::$?"
-      - if: steps.check.chenged
+          if ! git diff --exit-code --quiet origin/main...HEAD --name-only --relative=iso
+          then
+            echo "::set-output name=result::ok"
+          fi
+      - if: steps.check.result == 'ok'
         run: yarn test
         working-directory: iso
-
   # check:
   #   runs-on: Ubuntu-20.04
   #   outputs:
