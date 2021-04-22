@@ -11,6 +11,8 @@ jobs:
       - run: git diff origin/main...HEAD --name-only --relative=iso
       - run: |
           if ! git diff --exit-code --quiet origin/main --relative=iso
+          then
             yarn test
           fi
+        shell: bash '{0}'
         working-directory: iso
