@@ -10,7 +10,14 @@ jobs:
       - run: git checkout
       - run: git diff origin/main...HEAD --name-only --relative=iso
       - name: run test
-        run: yarn test
+        run: |
+          if git diff --exit-code --quiet origin/main...HEAD --name-only --relative=iso
+          then
+            echo "no changes"
+          else
+            echo "has changes"
+            yarn test
+          fi
         working-directory: iso
   # check:
   #   runs-on: Ubuntu-20.04
