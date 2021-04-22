@@ -1,4 +1,4 @@
-name: b-test
+name: iso-test
 on: [push]
 jobs:
   sparse:
@@ -7,6 +7,8 @@ jobs:
       - name: Sparse checkout
         shell: bash
         run: |
+          git config --global init.defaultBranch main
+
           REPO="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           BRANCH="${GITHUB_REF/#refs\/heads\//}"
           # Following code is based on logs of actions/checkout@v, with sparseCheckout stuff inserted in the middle
@@ -25,7 +27,7 @@ jobs:
           # echo ... 
           git -c protocol.version=2 fetch --no-tags --prune --progress --depth=10 origin +${GITHUB_SHA}:refs/remotes/origin/${BRANCH}
           git checkout --progress --force -B $BRANCH refs/remotes/origin/$BRANCH
-          ls
+          ls -al
   # check:
   #   runs-on: Ubuntu-20.04
   #   outputs:
