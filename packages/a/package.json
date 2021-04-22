@@ -4,6 +4,6 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "npx folio --config=folio.config.ts"
+    "test": "folio --config=folio.config.ts"
   }
 }
