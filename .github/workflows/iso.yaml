@@ -9,50 +9,8 @@ jobs:
       - run: git sparse-checkout add iso
       - run: git checkout ${GITHUB_SHA}
       - run: git diff origin/main...HEAD --name-only --relative=iso
-      - id: check
-        run: |
-          if ! git diff --exit-code --quiet origin/main...HEAD --name-only --relative=iso
-          then
-            echo "::set-output name=result::ok"
-          else
-            echo "::set-output name=result::ng"
+      - run: |
+          if ! git diff --exit-code --quiet origin/main --relative=iso
+            yarn test
           fi
-      - if: steps.check.result == 'ok'
-        run: yarn test
         working-directory: iso
-  # check:
-  #   runs-on: Ubuntu-20.04
-  #   outputs:
-  #     active: ${{ steps.checker.active }}
-  #   steps:
-  #     - uses: actions/checkout@v1
-  #     - id: checker
-  #       run: |
-  #         if git diff origin/develop...HEAD --name-only --relative=packages/a
-  #         then
-  #           echo "::set-output name=active::true"
-  #         fi
-  # test:
-  #   # needs: check
-  #   # if: ${{ needs.check.outputs.active }}
-  #   runs-on: Ubuntu-20.04
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - name: cache node_modules
-  #       uses: actions/cache@v1
-  #       with:
-  #         path: node_modules
-  #         key: node_modules_yarn-${{ hashFiles('**/yarn.lock') }}
-  #         restore-keys: |
-  #           node_modules_yarn-
-  #     - name: Use Node.js 15
-  #       uses: actions/setup-node@v1
-  #       with:
-  #         node-version: 15
-  #     - run: yarn install
-  #     - run: |
-  #         if git diff origin/develop...HEAD --name-only --relative=packages/b
-  #         then
-  #           yarn test
-  #         fi
-  #       working-directory: ./pacakages/b
