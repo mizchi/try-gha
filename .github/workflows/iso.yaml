@@ -4,30 +4,37 @@ jobs:
   sparse:
     runs-on: Ubuntu-20.04
     steps:
-      - name: Sparse checkout
-        shell: bash
-        run: |
-          git config --global init.defaultBranch main
+      - run: |
+        ls -al
+        git sparse-checkout init --cone
+        git sparse-checkout add iso
+      - uses: actions/checkout@v2
+      - run: ls
 
-          REPO="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          BRANCH="${GITHUB_REF/#refs\/heads\//}"
-          # Following code is based on logs of actions/checkout@v, with sparseCheckout stuff inserted in the middle
-          echo "Syncing repository: $GITHUB_REPOSITORY"
-          echo "Working directory is '$(pwd)' GITHUB_WORKSPACE=$GITHUB_WORKSPACE BRANCH=$BRANCH"
-          git version
-          git init $GITHUB_WORKSPACE
-          git remote add origin https://github.com/$GITHUB_REPOSITORY
-          git config --local gc.auto 0
+      # - name: Sparse checkout
+      #   shell: bash
+      #   run: |
+      #     git config --global init.defaultBranch main
 
-          git config core.sparseCheckout true
+      #     REPO="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+      #     BRANCH="${GITHUB_REF/#refs\/heads\//}"
+      #     # Following code is based on logs of actions/checkout@v, with sparseCheckout stuff inserted in the middle
+      #     echo "Syncing repository: $GITHUB_REPOSITORY"
+      #     echo "Working directory is '$(pwd)' GITHUB_WORKSPACE=$GITHUB_WORKSPACE BRANCH=$BRANCH"
+      #     git version
+      #     git init $GITHUB_WORKSPACE
+      #     git remote add origin https://github.com/$GITHUB_REPOSITORY
+      #     git config --local gc.auto 0
 
-          # Add here contents of sparse-checkout line by line
-          echo "iso" >> .git/info/sparse-checkout
+      #     git config core.sparseCheckout true
 
-          # echo ... 
-          git -c protocol.version=2 fetch --no-tags --prune --progress --depth=10 origin +${GITHUB_SHA}:refs/remotes/origin/${BRANCH}
-          git checkout --progress --force -B $BRANCH refs/remotes/origin/$BRANCH
-          ls -al
+      #     # Add here contents of sparse-checkout line by line
+      #     echo "iso" >> .git/info/sparse-checkout
+
+      #     # echo ... 
+      #     git -c protocol.version=2 fetch --no-tags --prune --progress --depth=1 origin +${GITHUB_SHA}:refs/remotes/origin/${BRANCH}
+      #     git checkout --progress --force -B $BRANCH refs/remotes/origin/$BRANCH
+      #     ls -al
   # check:
   #   runs-on: Ubuntu-20.04
   #   outputs:
