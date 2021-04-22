@@ -2,9 +2,7 @@ name: iso-test
 on: [push]
 jobs:
   sparse-test:
-    name: Sparse chekcout
     runs-on: Ubuntu-20.04
-    shell: bash
     steps:
       # - run: |
       #   REPO="https://${GITHUB_ACTOR}:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git"
