@@ -5,6 +5,6 @@
   "author": "mizchi <miz404@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "test": "echo ok iso"
+    "test": "echo ok iso 2"
   }
 }
