@@ -1,0 +1,39 @@
+name: a-test
+on: [push]
+jobs:
+  # check:
+  #   runs-on: Ubuntu-20.04
+  #   outputs:
+  #     active: ${{ steps.checker.active }}
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - id: checker
+  #       run: |
+  #         if git diff origin/develop...HEAD --name-only --relative=packages/a
+  #         then
+  #           echo "::set-output name=active::true"
+  #         fi
+  test:
+    # needs: check
+    # if: ${{ needs.check.outputs.active }}
+    runs-on: Ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: cache node_modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: node_modules_yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            node_modules_yarn-
+      - name: Use Node.js 15
+        uses: actions/setup-node@v1
+        with:
+          node-version: 15
+      - run: yarn install
+      - run: |
+          if git diff origin/develop...HEAD --name-only --relative=packages/a
+          then
+            yarn test
+          fi
+        working-directory: ./pacakages/b

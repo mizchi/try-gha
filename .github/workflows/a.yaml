@@ -13,27 +13,43 @@ jobs:
   #         then
   #           echo "::set-output name=active::true"
   #         fi
-  test:
-    # needs: check
-    # if: ${{ needs.check.outputs.active }}
-    runs-on: Ubuntu-20.04
+  # test:
+  # needs: check
+  # if: ${{ needs.check.outputs.active }}
+  # runs-on: Ubuntu-20.04
+  # steps:
+  #   - uses: actions/checkout@v1
+  #   - name: cache node_modules
+  #     uses: actions/cache@v1
+  #     with:
+  #       path: node_modules
+  #       key: actionhub-yarn-${{ hashFiles('**/yarn.lock') }}
+  #       restore-keys: |
+  #         actionhub-yarn-
+  #   - name: Use Node.js 15
+  #     uses: actions/setup-node@v1
+  #     with:
+  #       node-version: 15
+  #   - run: yarn install
+  #   - run: |
+  #       if git diff origin/develop...HEAD --name-only --relative=packages/a
+  #       then
+  #         yarn test
+  #       fi
+  #     working-directory: ./pacakages/a
+  build:
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v1
-      - name: cache node_modules
-        uses: actions/cache@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
         with:
-          path: node_modules
-          key: actionhub-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            actionhub-yarn-
-      - name: Use Node.js 15
-        uses: actions/setup-node@v1
-        with:
-          node-version: 15
+          node-version: "14.x"
+      - uses: microsoft/playwright-github-action@v1
       - run: yarn install
-      - run: |
-          if git diff origin/develop...HEAD --name-only --relative=packages/a
-          then
-            yarn test
-          fi
-        working-directory: ./pacakages/a
+      - run: yarn test
+        working-directory: packages/a
