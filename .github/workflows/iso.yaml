@@ -8,6 +8,7 @@ jobs:
       - run: git sparse-checkout init --cone
       - run: git sparse-checkout add iso
       - run: git checkout
+      - run: git remote add origin https://${GITHUB_ACTOR}:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git
       - run: git fetch origin/main --depth 1
       - run: git diff origin/main...HEAD --name-only --relative=iso
       - name: run test
