@@ -11,6 +11,6 @@ jobs:
       - run: git diff origin/main...HEAD --name-only --relative=iso
       - id: "check"
         run: echo "::set-output name=result::$(git diff --exit-code --quiet origin/main --relative=iso > /dev/null || echo $?)"
-      - run: echo "${{ steps.check.result }}"
-      - if: steps.check.result == 1
+      - run: echo "${{ steps.check.outputs.result }}"
+      - if: steps.check.outputs.result == 1
         run: echo run
