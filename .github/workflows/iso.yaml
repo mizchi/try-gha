@@ -9,14 +9,15 @@ jobs:
       - run: git sparse-checkout add iso
       - run: git checkout ${GITHUB_SHA}
       - run: git diff origin/main...HEAD --name-only --relative=iso
-      - name: run test
+      - id: t
+        shell: bash -x
         run: |
-          if ! git diff --exit-code --quiet origin/main...HEAD --name-only --relative=iso
-          then
-            echo "has changes"
-            yarn test
-          fi
+          _=$(git diff --exit-code --quiet origin/main...HEAD --name-only --relative=iso)
+          echo "::set-output name=changed::$?"
+      - if: steps.t.chenged
+        run: yarn test
         working-directory: iso
+
   # check:
   #   runs-on: Ubuntu-20.04
   #   outputs:
